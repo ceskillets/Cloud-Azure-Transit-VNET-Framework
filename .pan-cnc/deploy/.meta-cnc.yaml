@@ -1,0 +1,158 @@
+name: azure_transit_vnet_infra
+# label used for menu selection
+label: Azure Transit VNET Framework Step 1 - Infrastructure deployment
+
+description: >
+  This skillet will deploy the Azure Transit VNET Framework Infrastructure.  The template will deploy
+  Azure VNets, Route Tables, Subnets, Availability Zones, Load Balancers, Network Security Groups, etc..
+  The Template will also deploy Palo Alto Networks Firewall's in LB-Sandwich architecture.
+# type of skillet (panos or panorama or template or terraform)
+type: python3
+
+# more complex skillets may express a dependency on another skillet that should be loaded before this one.
+# For example, a set of skillets may build off of a single 'golden config' that contains shared configuration
+# As this skillet is very simple, there is no need to build on another one.
+extends:
+
+# Labels allow grouping and type specific options and are generally only used in advanced cases
+labels:
+  collection: 
+    - Azure Transit VNET
+
+# variables define the things an operator may customize in this skillet. Things like DNS servers, NTP addresses, etc
+# may be customized for each deployment. Each variable will be rendered as a form field in the panhandler application
+variables:
+  - name: username
+    description: FW Username
+    default: paloalto
+    type_hint: text
+  - name: password
+    description: FW Password
+    default: PanPassword123!
+    type_hint: password
+  - name: resource_group
+    description: Azure Resource Group
+    default: transit-vnet-framework-changeme
+    type_hint: text
+  - name: azure_region
+    description: Azure Region
+    default: centralus
+    type_hint: dropdown
+    dd_list:
+     - key: "West US"
+       value: "westus"
+     - key: "West US 2"
+       value: "westus2"
+     - key: "West Central US"
+       value: "westcentralus"
+     - key: "East US"
+       value: "eastus"
+     - key: "East US 2"
+       value: "eastus2"
+     - key: "Central US"
+       value: "centralus"
+     - key: "North Central US"
+       value: "northcentralus"
+     - key: "South Central US"
+       value: "southcentralus"
+     - key: "Canada Central"
+       value: "canadacentral"
+     - key: "Canada East"
+       value: "canadaeast"
+     - key: "UK West"
+       value: "ukwest"
+     - key: "UK South"
+       value: "uksouth"
+     - key: "North Europe"
+       value: "northeurope"
+     - key: "West Europe"
+       value: "westeurope"
+     - key: "Australia East"
+       value: "australiaeast"
+     - key: "Australia Southeast"
+       value: "australiasoutheast"
+     - key: "Australia Central"
+       value: "australiacentral"
+     - key: "Australia Central 2"
+       value: "australiacentral2"
+     - key: "East Asia"
+       value: "eastasia"
+     - key: "South East Asia"
+       value: "southeastasia"
+     - key: "Korea Central"
+       value: "koreacentral"
+     - key: "Korea South"
+       value: "koreasouth"
+     - key: "Japan West"
+       value: "japanwest"
+     - key: "Japan East"
+       value: "japaneast"
+     - key: "South India"
+       value: "southindia"
+     - key: "Central India"
+       value: "centralindia"
+     - key: "West India"
+       value: "westindia"
+     - key: "Brazil South"
+       value: "brazilsouth"
+     - key: "France Central"
+       value: "francecentral"
+     - key: "France South"
+       value: "francesouth"
+  - name: vnet_cidr
+    description: HUB VNET Space (i.e. transit-vnet 10.0.0.0/16)
+    default: 10.0.0.0/16
+    type_hint: cidr
+  - name: subnet0_cidr
+    description: FW-Management Subnet Space (i.e. 10.0.0.0/24)
+    default: 10.0.0.0/24
+    type_hint: cidr
+  - name: subnet1_cidr
+    description: UnTrust Subnet Space (i.e. 10.0.1.0/24)
+    default: 10.0.1.0/24
+    type_hint: cidr
+  - name: subnet2_cidr
+    description: Trust Subnet Space (i.e. 10.0.2.0/24)
+    default: 10.0.2.0/24
+    type_hint: cidr
+  - name: subnet3_cidr
+    description: LB-Subnet Space (i.e. 10.0.3.0/24)
+    default: 10.0.3.0/24
+    type_hint: cidr
+  - name: spoke1_vnet_cidr
+    description: Spoke1 VNET Space (i.e. transit-vnet 10.1.0.0/16)
+    default: 10.1.0.0/16
+    type_hint: cidr
+  - name: subnet10_cidr
+    description: Web Subnet Space (i.e. 10.1.0.0/24)
+    default: 10.1.0.0/24
+    type_hint: cidr
+  - name: subnet11_cidr
+    description: App Subnet Space (i.e. 10.0.1.0/24)
+    default: 10.1.1.0/24
+    type_hint: cidr
+  - name: subnet12_cidr
+    description: DB Subnet Space (i.e. 10.0.2.0/24)
+    default: 10.1.2.0/24
+    type_hint: cidr
+  - name: subnet13_cidr
+    description: Dev Subnet Space (i.e. 10.0.3.0/24)
+    default: 10.1.3.0/24
+    type_hint: cidr
+  - name: egresslb_ip
+    description: Internal Egress LB FrontEnd IP (IP must be part of LB-Subnet space i.e. 10.0.3.100)
+    default: 10.0.3.100
+    type_hint: text
+ # - name: azure_region
+ #   description: Azure Region
+ #   default: centralus
+ #   type_hint: text
+    
+    
+# Snippets is an ordered list of configuration xml fragments that will be pushed to the PAN-OS NGFW. The xpath
+# determines where in the configuration hierarchy the xml fragment will be set. 'file' indicates the name of the file
+# to load and parse. Jinja2 style variables will be variable interpolated using the values of the 'variables' defined
+# in the 'variables' section.
+snippets:
+  - name: script
+    file: ../../deploy.py
