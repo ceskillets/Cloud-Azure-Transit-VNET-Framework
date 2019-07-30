@@ -5,7 +5,7 @@ Palo Alto Networks Panhandler Azure Transit VNET Framework provides VM-Series Hu
 
 # Skillet Details
 Authoring Group: Public Cloud  
-Documentation:  https://github.com/dstanic-pan/azure-transit-vnet-v2/tree/master/Documentation  
+Documentation:  https://github.com/ceskillets/Cloud-Azure-Transit-VNET-Framework/tree/master/Documentation 
 PAN-OS Supported:  8.1, 9.0  
 Cloud Provider(s) Supported:  Azure  
 Type of Skillet:  terraform, python3l, panos  
